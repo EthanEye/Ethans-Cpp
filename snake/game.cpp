@@ -29,9 +29,21 @@ void Game::run()
             {
                 window.close();
             }
+            if (event->is<sf::Event::KeyPressed>())
+            {
+                auto key = event->getIf<sf::Event::KeyPressed>()->code;
+                if (key == sf::Keyboard::Key::Up)
+                    snake.setDirection(0, -1);
+                else if (key == sf::Keyboard::Key::Down)
+                    snake.setDirection(0, 1);
+                else if (key == sf::Keyboard::Key::Left)
+                    snake.setDirection(-1, 0);
+                else if (key == sf::Keyboard::Key::Right)
+                    snake.setDirection(1, 0);
+            }
         }
         update();
-        if (!snake.checkWallCollision(SCREEN_X, SCREEN_Y))
+        if (!snake.checkWallCollision(SCREEN_X, SCREEN_Y) && !snake.checkSelfCollision())
         {
             snake.move();
         }
@@ -47,7 +59,7 @@ void Game::run()
 
 void Game::update()
 {
-    std::deque<std::pair<int,int>> body = snake.getBody();
+    std::deque<std::pair<int, int>> body = snake.getBody();
     window.clear(sf::Color::Black);
 
     for (auto &segment : snake.getBody())

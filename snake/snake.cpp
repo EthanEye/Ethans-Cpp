@@ -22,7 +22,7 @@ void Snake::move()
     int newHeadX = getHeadX() + (dirX * 10);
     int newHeadY = getHeadY() + (dirY * 10);
     body.push_front({newHeadX, newHeadY}); // add new head
-    body.pop_back();                        // remove tail
+    body.pop_back();                       // remove tail
 }
 void Snake::grow()
 {
@@ -36,7 +36,9 @@ void Snake::reset(int spawnX, int spawnY)
 }
 void Snake::setDirection(int dirX, int dirY)
 {
-     direction = {dirX, dirY};
+    if (dirX == -direction.first && dirY == -direction.second)
+        return;
+    direction = {dirX, dirY};
 }
 std::pair<int, int> Snake::getDirection()
 {
@@ -53,16 +55,23 @@ bool Snake::checkWallCollision(int maxX, int maxY)
         return true;
 
     return false;
-    return false;
 }
 bool Snake::checkSelfCollision()
 {
+    int headX = getHeadX();
+    int headY = getHeadY();
+    for (int i = 1; i < body.size(); i++)
+    {
+        if (headX == body[i].first && headY == body[i].second)
+            return true;
+    }
     return false;
 }
 bool Snake::checkFoodCollision(int foodX, int foodY)
 {
     return false;
 }
+
 int Snake::getHeadX()
 {
     return body[0].first;
@@ -75,7 +84,7 @@ int Snake::getLength()
 {
     return 0;
 }
-std::deque<std::pair<int,int>> Snake::getBody()
+std::deque<std::pair<int, int>> Snake::getBody()
 {
     return body;
 }
