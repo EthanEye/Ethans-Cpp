@@ -1,6 +1,7 @@
 #pragma once
 #include "snake.h"
 #include "food.h"
+#include <SFML/Graphics.hpp>
 
 class Game 
 {
@@ -21,6 +22,7 @@ private:
     // game objects
     Snake snake;
     Food food;
+    sf::RenderWindow window;
 
 public:
     // constructor
@@ -29,7 +31,6 @@ public:
     // methods
     void run();
     void init();
-    void gameLoop();
     void reset();
     int getScore();
 
