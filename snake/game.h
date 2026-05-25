@@ -3,6 +3,8 @@
 #include "food.h"
 #include <SFML/Graphics.hpp>
 
+// ui built with SFML (simple and fast multimedia library)
+
 class Game 
 {
 
@@ -11,7 +13,7 @@ private:
     static constexpr int SCREEN_X = 810;
     static constexpr int SCREEN_Y = 540;
     // refresh rate
-    static constexpr int REFRESH = 60;
+    static constexpr int REFRESH = 100;
 
     // game state
     int score;
@@ -23,6 +25,7 @@ private:
     Snake snake;
     Food food;
     sf::RenderWindow window;
+    sf::RectangleShape rect;
 
 public:
     // constructor
@@ -31,6 +34,7 @@ public:
     // methods
     void run();
     void init();
+    void update();
     void reset();
     int getScore();
 
