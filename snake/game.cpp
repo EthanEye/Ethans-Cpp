@@ -12,8 +12,8 @@ Game::Game() : window(sf::VideoMode({SCREEN_X, SCREEN_Y}), "Snake")
 
 void Game::init()
 {
-    int centerX = (SCREEN_X / 2) - 5;
-    int centerY = (SCREEN_Y / 2) - 5;
+    int centerX = ((SCREEN_X / 2) / 10) * 10;
+    int centerY = ((SCREEN_Y / 2) / 10) * 10;
     snake.reset(centerX, centerY);
 }
 
@@ -52,6 +52,17 @@ void Game::run()
             isGameOver = true;
             window.close();
         }
+        if (!foodRects.size() >= 1)
+        {
+            auto [foodX, foodY] = food.spawn(SCREEN_X, SCREEN_Y);
+            if (foodX != -1 && foodY != -1)
+            {
+                sf::RectangleShape newFood(sf::Vector2f(10.f, 10.f));
+                newFood.setFillColor(sf::Color::Red);
+                newFood.setPosition(sf::Vector2f(foodX, foodY));
+                foodRects.push_back(newFood);
+            }
+        }
 
         sf::sleep(sf::milliseconds(REFRESH));
     }
@@ -70,6 +81,10 @@ void Game::update()
         rect.setFillColor(sf::Color::Blue);
         rect.setPosition(sf::Vector2f(x, y));
         window.draw(rect);
+    }
+    for (auto &f : foodRects)
+    {
+        window.draw(f);
     }
     window.display();
 }

@@ -1,15 +1,27 @@
-    #include "food.h"
+#include "food.h"
+#include <cstdlib>
+#include <ctime>
+
+Food::Food()
+{
+}
+
+std::pair<int, int> Food::spawn(int maxX, int maxY)
+{
     
-    Food::Food(){
 
+    if (rand() % 100 < 10)
+    {
+        x = (rand() % (maxX / 10)) * 10;
+        y = (rand() % (maxY / 10)) * 10;
+        return {x, y};
     }
-
-    void Food::spawn(int maxX, int maxY){
-
-    }
-    void Food::addBlockedLocation(int x, int y){
-
-    }
-    bool Food::isBlocked(int x, int y){
-        return false;
-    }
+    return {-1, -1}; 
+}
+void Food::addBlockedLocation(int x, int y)
+{
+}
+bool Food::isBlocked(int x, int y)
+{
+    return false;
+}

@@ -10,7 +10,7 @@ class Game
 
 private:
     // screen dimensions
-    static constexpr int SCREEN_X = 810;
+    static constexpr int SCREEN_X = 800;
     static constexpr int SCREEN_Y = 540;
     // refresh rate
     static constexpr int REFRESH = 100;
@@ -26,6 +26,8 @@ private:
     Food food;
     sf::RenderWindow window;
     sf::RectangleShape rect;
+    sf::RectangleShape foodRect;
+    std::vector<sf::RectangleShape> foodRects;
 
 public:
     // constructor

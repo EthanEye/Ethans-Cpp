@@ -9,7 +9,7 @@ class Food{
     std::vector<std::pair<int,int>> blockedLocations;
 
     Food();
-    void spawn(int maxX, int maxY);
+    std::pair<int,int> spawn(int maxX, int maxY);
     void addBlockedLocation(int x, int y);
     bool isBlocked(int x, int y);
 
