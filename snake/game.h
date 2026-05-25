@@ -1,10 +1,10 @@
 #pragma once
-#include <QWidget>
-#include <QScreen>
-#include "snake.h" 
+#include "snake.h"
 #include "food.h"
 
-class Game : public QWidget {
+class Game 
+{
+
 private:
     // screen dimensions
     static constexpr int SCREEN_X = 810;
@@ -29,8 +29,9 @@ public:
     // methods
     void run();
     void init();
-    void update();
-    void render();
+    void gameLoop();
     void reset();
     int getScore();
+
+
 };
