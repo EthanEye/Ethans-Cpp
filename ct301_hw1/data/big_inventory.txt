@@ -1,0 +1,39 @@
+# ============================================================
+# Big sample inventory for CT 301 HW1 -- covers many cases.
+# Columns:
+#  EQUIPMENT  serial name category value date brand model cpu obsolete broken warranty_end support_end
+#  CONSUMABLE id     name category value quantity brand model
+#  BORROWED   id     name category value lender returnby brand model
+# ============================================================
+
+# --- Equipment: peripherals (Razer brand group, varied ages) ---
+EQUIPMENT SN-KB01 BlackWidow_Keyboard peripherals 180.00 2023-02-10 Razer BlackWidow_V4 - false false 2026-02-10 2028-02-10
+EQUIPMENT SN-MS01 DeathAdder_Mouse peripherals 70.00 2024-09-01 Razer DeathAdder_V3 - false false 2026-09-01 2027-09-01
+EQUIPMENT SN-MS02 Basilisk_Mouse peripherals 90.00 2025-01-15 Razer Basilisk_V3 - false false 2027-01-15 2028-01-15
+EQUIPMENT SN-KB02 Huntsman_Keyboard peripherals 200.00 2022-06-01 Razer Huntsman_V2 - true false 2024-06-01 2025-06-01
+
+# --- Equipment: computers (Dell, identical model, different serials) ---
+EQUIPMENT SN-LP01 XPS15_Laptop computers 1600.00 2022-08-15 Dell XPS15_9520 i7-12700H false false 2025-08-15 2027-08-15
+EQUIPMENT SN-LP02 XPS15_Laptop computers 1600.00 2022-08-15 Dell XPS15_9520 i7-12700H false false 2025-08-15 2027-08-15
+EQUIPMENT SN-LP03 XPS15_Laptop computers 1600.00 2023-11-20 Dell XPS15_9530 i7-13700H false false 2026-11-20 2028-11-20
+
+# --- Equipment: test-bench (expensive, some old / broken) ---
+EQUIPMENT SN-SC01 Oscilloscope test-bench 1200.00 2019-05-20 Keysight DSOX1204G - false true 2022-05-20 2024-05-20
+EQUIPMENT SN-PS01 Power_Supply test-bench 450.00 2021-03-10 Keysight E36313A - false false 2024-03-10 2026-03-10
+EQUIPMENT SN-LA01 Logic_Analyzer test-bench 900.00 2020-07-01 Saleae Logic_Pro_16 - true true 2022-07-01 2023-07-01
+
+# --- Equipment: XR headsets (obsolete-but-working, the Magic Leap case) ---
+EQUIPMENT SN-ML01 MagicLeap1 headsets 2300.00 2018-08-01 MagicLeap ML1 - true false 2020-08-01 2021-08-01
+EQUIPMENT SN-HL01 HoloLens2 headsets 3500.00 2020-11-01 Microsoft HoloLens_2 - false false 2023-11-01 2024-11-01
+EQUIPMENT SN-Q301 Quest3 headsets 500.00 2024-10-01 Meta Quest_3 - false false 2026-10-01 2027-10-01
+
+# --- Consumables (bulk, not loanable) ---
+CONSUMABLE CXY-01 USB-C_Cable cables 8.50 50 - -
+CONSUMABLE CXY-02 HDMI_Cable cables 12.00 30 Belkin HD-2M
+CONSUMABLE CXY-03 AA_Battery power 0.75 200 Energizer Max
+CONSUMABLE CXY-04 Solder_Spool supplies 25.00 8 Kester 63-37
+CONSUMABLE CXY-05 Filament_PLA supplies 22.00 15 Prusa PLA-1kg
+
+# --- Borrowed (loaned TO the lab; cannot loan/sell/surplus) ---
+BORROWED BR-01 LoanerScope test-bench 0.00 PartnerLab_CSU 2026-09-01 Tektronix MDO3
+BORROWED BR-02 DemoHeadset headsets 0.00 Meta_Vendor 2026-07-15 Meta Quest_Pro

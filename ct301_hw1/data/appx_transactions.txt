@@ -1,0 +1,11 @@
+# loan the Razer mouse to a student
+BY id SN1207
+LOAN student_ramirez 2026-06-01
+# show the state of the lab
+REPORT
+# retire broken, out-of-warranty gear (the oscilloscope qualifies)
+BY surplus_candidate true
+SURPLUS
+# list the Razer gear we still have
+BY brand Razer
+PRINT

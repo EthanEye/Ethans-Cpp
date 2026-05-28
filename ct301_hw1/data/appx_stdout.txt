@@ -1,0 +1,12 @@
+=== Inventory Report ===
+InStock: 4
+OnLoan: 1
+Sold: 0
+Surplus: 0
+In-stock value: 497.00
+Revenue: 0.00
+On loan:
+  SN1207 -> student_ramirez (2026-06-01)
+Surplus count: 0
+SN1207 EQUIPMENT DeathAdder_Mouse peripherals Razer DeathAdder_V3 cpu=- purchased=2024-09-01 value=56.00 obsolete=false broken=false warranty=2026-09-01 support=2027-09-01 OnLoan
+SN8842 EQUIPMENT BlackWidow_Keyboard peripherals Razer BlackWidow_V4 cpu=- purchased=2023-02-10 value=72.00 obsolete=false broken=false warranty=2026-02-10 support=2028-02-10 InStock

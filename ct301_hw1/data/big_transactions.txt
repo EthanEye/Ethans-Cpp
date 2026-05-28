@@ -1,0 +1,87 @@
+# ============================================================
+# Big transaction script -- exercises every verb and many paths.
+# ============================================================
+
+# 1) Initial full report
+REPORT
+
+# 2) Selection + print: all Razer gear
+BY brand Razer
+PRINT
+
+# 3) Group by brand, then by category
+GROUP_BY brand
+GROUP_BY category
+
+# 4) Top 5 most valuable in-stock
+TOP_BY_VALUE 5
+PRINT
+
+# 5) Loan two laptops to people
+BY id SN-LP01
+LOAN prof_ortega 2026-05-01
+BY id SN-LP02
+LOAN student_lee 2026-05-15
+REPORT
+
+# 6) Try to sell a laptop that is on loan -> rejected, print the reject
+BY id SN-LP01
+SELL
+PRINT
+
+# 7) Return one laptop
+BY id SN-LP01
+RETURN
+REPORT
+
+# 8) Sell some consumables (revenue accrues)
+BY id CXY-01
+SELL
+BY id CXY-03
+SELL
+REPORT
+
+# 9) Surplus all surplus-candidates (broken AND out of warranty)
+BY surplus_candidate true
+PRINT
+SURPLUS
+REPORT
+
+# 10) Try to loan a consumable -> rejected
+BY id CXY-02
+LOAN nobody 2026-06-01
+PRINT
+
+# 11) Try to loan a broken item -> rejected (if any broken remain in stock)
+BY broken true
+PRINT
+
+# 12) Borrowed item: try to loan, sell, surplus -> all rejected
+BY id BR-01
+LOAN someone 2026-06-01
+PRINT
+BY id BR-01
+SELL
+PRINT
+BY id BR-01
+SURPLUS
+PRINT
+
+# 13) Select older equipment and surplus it
+OLDER_THAN 2021-01-01
+PRINT
+SURPLUS
+REPORT
+
+# 14) Obsolete-but-working item can still be loaned
+BY id SN-ML01
+LOAN researcher_kim 2026-05-20
+REPORT
+
+# 15) Add a new item mid-stream, then report
+ADD EQUIPMENT SN-NEW1 RTX4090_GPU computers 1800.00 2025-03-01 NVIDIA RTX4090 - false false 2028-03-01 2029-03-01
+ALL
+PRINT
+
+# 16) Final report
+REPORT
