@@ -10,7 +10,6 @@ class Food{
 
     Food();
     std::pair<int,int> spawn(int maxX, int maxY);
-    void addBlockedLocation(int x, int y);
     bool isBlocked(int x, int y);
 
 };

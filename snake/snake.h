@@ -19,6 +19,7 @@ public:
     bool checkWallCollision(int maxX, int maxY);
     bool checkSelfCollision();
     bool checkFoodCollision(int foodX, int foodY);
+    bool shouldGrow = true;
     int getHeadX();
     int getHeadY();
     int getLength();

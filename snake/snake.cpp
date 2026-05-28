@@ -1,4 +1,5 @@
 #include "snake.h"
+#include "food.h"
 
 // moving right
 // dirX = 1, dirY = 0
@@ -22,16 +23,23 @@ void Snake::move()
     int newHeadX = getHeadX() + (dirX * 10);
     int newHeadY = getHeadY() + (dirY * 10);
     body.push_front({newHeadX, newHeadY}); // add new head
-    body.pop_back();                       // remove tail
+    if (shouldGrow) {
+        shouldGrow = false;
+    } else {
+        body.pop_back();
+    }
 }
 void Snake::grow()
 {
+    shouldGrow = true;
+
 }
 void Snake::reset(int spawnX, int spawnY)
 {
+    shouldGrow = false;
     body.clear();
-    length = 1;
     body.push_back({spawnX, spawnY});
+    length = 1;
     setDirection(1, 0);
 }
 void Snake::setDirection(int dirX, int dirY)
@@ -69,6 +77,10 @@ bool Snake::checkSelfCollision()
 }
 bool Snake::checkFoodCollision(int foodX, int foodY)
 {
+    if(getHeadX() == foodX && getHeadY() == foodY){
+        return true;
+    }
+        
     return false;
 }
 
@@ -82,7 +94,7 @@ int Snake::getHeadY()
 }
 int Snake::getLength()
 {
-    return 0;
+    return body.size();
 }
 std::deque<std::pair<int, int>> Snake::getBody()
 {

@@ -17,7 +17,6 @@ private:
 
     // game state
     int score;
-    int level;
     bool isRunning;
     bool isGameOver;
 
@@ -27,6 +26,8 @@ private:
     sf::RenderWindow window;
     sf::RectangleShape rect;
     sf::RectangleShape foodRect;
+    sf::Font font;
+    sf::Text scoreText;
     std::vector<sf::RectangleShape> foodRects;
 
 public:
@@ -37,7 +38,6 @@ public:
     void run();
     void init();
     void update();
-    void reset();
     int getScore();
 
 

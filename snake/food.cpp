@@ -18,9 +18,7 @@ std::pair<int, int> Food::spawn(int maxX, int maxY)
     }
     return {-1, -1}; 
 }
-void Food::addBlockedLocation(int x, int y)
-{
-}
+
 bool Food::isBlocked(int x, int y)
 {
     return false;
