@@ -12,8 +12,8 @@ std::pair<int, int> Food::spawn(int maxX, int maxY)
 
     if (rand() % 100 < 10)
     {
-        x = (rand() % (maxX / 10)) * 10;
-        y = (rand() % (maxY / 10)) * 10;
+        x = (rand() % (maxX / 20)) * 20;
+        y = (rand() % (maxY / 20)) * 20;
         return {x, y};
     }
     return {-1, -1}; 

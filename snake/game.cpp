@@ -4,26 +4,34 @@
 
 Game::Game() : window(sf::VideoMode({SCREEN_X, SCREEN_Y}), "Snake"),
                font("DejaVuSans.ttf"),
-               scoreText(font)
+               scoreText(font),
+               recordText(font),
+               db("mydb.db")
 {
 
     scoreText.setString("Score: 0");
     scoreText.setCharacterSize(24);
     scoreText.setFillColor(sf::Color::White);
     scoreText.setPosition({10.f, 10.f});
+
+    recordText.setString("Record: 0");
+    recordText.setCharacterSize(24);
+    recordText.setFillColor(sf::Color::White);
+    recordText.setPosition({350.f, 10.f});
+
     score = 0;
-    isRunning = true;
     isGameOver = false;
 }
 
 void Game::init()
 {
+    updateScore();
     isGameOver = false;
     foodRects.clear();
     food.x = -100;
     food.y = -100;
-    int centerX = ((SCREEN_X / 2) / 10) * 10;
-    int centerY = ((SCREEN_Y / 2) / 10) * 10;
+    int centerX = ((SCREEN_X / 2) / 20) * 20;
+    int centerY = ((SCREEN_Y / 2) / 20) * 20;
     snake.reset(centerX, centerY);
     score = 0;
     scoreText.setString("Score: " + std::to_string(score));
@@ -70,15 +78,16 @@ void Game::run()
             else
             {
                 scoreText.setString("Press space to restart");
+                updateScore();
                 isGameOver = true;
             }
 
-            if (foodRects.size() < 1)
+            if (foodRects.size() < 20)
             {
                 auto [foodX, foodY] = food.spawn(SCREEN_X, SCREEN_Y);
                 if (foodX != -1 && foodY != -1)
                 {
-                    sf::RectangleShape newFood(sf::Vector2f(10.f, 10.f));
+                    sf::RectangleShape newFood(sf::Vector2f(20.f, 20.f));
                     newFood.setFillColor(sf::Color::Red);
                     newFood.setPosition(sf::Vector2f(foodX, foodY));
                     food.x = foodX;
@@ -86,17 +95,22 @@ void Game::run()
                     foodRects.push_back(newFood);
                 }
             }
-
-            if (snake.checkFoodCollision(food.x, food.y) && !foodRects.empty())
+            for (int i = 0; i < foodRects.size(); i++)
             {
-                snake.grow();
-                score += 1;
-                scoreText.setString("Score: " + std::to_string(score));
-                foodRects.pop_back();
+                sf::Vector2f pos = foodRects[i].getPosition();
+                if (snake.checkFoodCollision(pos.x, pos.y))
+                {
+                    snake.grow();
+                    score += 1;
+                    scoreText.setString("Score: " + std::to_string(score));
+                    foodRects.erase(foodRects.begin() + i);
+                    i--; // adjust index after erase
+                    break;
+                }
             }
         }
 
-        update(); 
+        update();
         sf::sleep(sf::milliseconds(REFRESH));
     }
 }
@@ -110,7 +124,7 @@ void Game::update()
     {
         int x = segment.first;
         int y = segment.second;
-        rect = sf::RectangleShape(sf::Vector2f(10.f, 10.f));
+        rect = sf::RectangleShape(sf::Vector2f(20.f, 20.f));
         rect.setFillColor(sf::Color::Blue);
         rect.setPosition(sf::Vector2f(x, y));
         window.draw(rect);
@@ -120,9 +134,24 @@ void Game::update()
         window.draw(f);
     }
     window.draw(scoreText);
+    window.draw(recordText);
     window.display();
 }
 
+void Game::updateScore()
+{
+    db.query("CREATE TABLE IF NOT EXISTS leaderboard (id INTEGER PRIMARY KEY, player TEXT UNIQUE, high_score INTEGER DEFAULT 0);");
+    db.query("INSERT OR IGNORE INTO leaderboard (player, high_score) VALUES ('player1', 0);");
+
+    // only update if its a new high score
+    int currentHigh = db.getHighScore("player1");
+    recordText.setString("Record: " + std::to_string(currentHigh));
+    if (score > currentHigh)
+    {
+        std::string sql = "UPDATE leaderboard SET high_score = " + std::to_string(score) + " WHERE player = 'player1';";
+        db.query(sql);
+    }
+}
 int Game::getScore()
 {
     return score;

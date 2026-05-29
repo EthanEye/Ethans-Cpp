@@ -20,8 +20,8 @@ void Snake::move()
 {
     int dirX = direction.first;
     int dirY = direction.second;
-    int newHeadX = getHeadX() + (dirX * 10);
-    int newHeadY = getHeadY() + (dirY * 10);
+    int newHeadX = getHeadX() + (dirX * 20);
+    int newHeadY = getHeadY() + (dirY * 20);
     body.push_front({newHeadX, newHeadY}); // add new head
     if (shouldGrow) {
         shouldGrow = false;

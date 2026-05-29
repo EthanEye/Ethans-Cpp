@@ -2,13 +2,14 @@
 #include "snake.h"
 #include "food.h"
 #include <SFML/Graphics.hpp>
-
+#include "database.h"
 // ui built with SFML (simple and fast multimedia library)
 
 class Game 
 {
 
 private:
+    Database db;
     // screen dimensions
     static constexpr int SCREEN_X = 800;
     static constexpr int SCREEN_Y = 540;
@@ -17,7 +18,6 @@ private:
 
     // game state
     int score;
-    bool isRunning;
     bool isGameOver;
 
     // game objects
@@ -28,6 +28,7 @@ private:
     sf::RectangleShape foodRect;
     sf::Font font;
     sf::Text scoreText;
+    sf::Text recordText;
     std::vector<sf::RectangleShape> foodRects;
 
 public:
@@ -39,6 +40,7 @@ public:
     void init();
     void update();
     int getScore();
+    void updateScore();
 
 
 };
