@@ -6,6 +6,7 @@
 
 #include <format>
 #include <sstream>
+#include <cmath>
 
 namespace inv {
 
@@ -23,12 +24,15 @@ namespace inv {
 // floor of 10% of the base value. The obsolete_ flag and the warranty/support
 // dates do NOT affect value.
 double Equipment::currentValue() const {
-    return 0.0;
+    if (broken_) return 0.0;
+    int yearsOwned = kToday.year() - purchased_.year();
+    double depreciated = baseValue_ * std::pow(0.8, yearsOwned); 
+    return std::max(0.0, depreciated);
 }
 
 // [TODO] true when kToday is past warrantyEnd_ (no return path).
 bool Equipment::noRMA() const {
-    return false;
+    return kToday > warrantyEnd_;
 }
 
 // [TODO] true when the item is broken_ AND noRMA().
