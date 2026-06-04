@@ -68,7 +68,12 @@ namespace inv
     // list's pointers into an output vector; call it once per list.
     std::vector<Item *> Inventory::select_all()
     {
-        return {};
+        std::vector<Item *> result;
+        gather(inStock_, result);
+        gather(onLoan_, result);
+        gather(sold_, result);
+        gather(surplus_, result);
+        return result;
     }
 
     // [TODO] Walk every item, ask each one for the given attribute (p->attribute(key)),
@@ -76,17 +81,38 @@ namespace inv
     // This is the pattern that select_in_state / select_older_than also follow.
     std::vector<Item *> Inventory::select_by(std::string_view key, std::string_view value)
     {
-        (void)key;
-        (void)value; // remove when you implement this
-        return {};
+        std::vector<Item *> all;
+        gather(inStock_, all);
+        gather(onLoan_, all);
+        gather(sold_, all);
+        gather(surplus_, all);
+
+        std::vector<Item *> matches;
+        for (Item *p : all)
+        {
+            auto attr = p->attribute(key);
+            if (attr && *attr == value)
+            {
+                matches.push_back(p);
+            }
+        }
+        return matches;
     }
 
     // [TODO] Return borrowed pointers to all items currently in the given state.
     // (Hint: gather() the one matching list.)
     std::vector<Item *> Inventory::select_in_state(State s)
     {
-        (void)s; // remove when you implement this
-        return {};
+        std::vector<Item *> result;
+        if (s == State::InStock)
+            gather(inStock_, result);
+        else if (s == State::OnLoan)
+            gather(onLoan_, result);
+        else if (s == State::Sold)
+            gather(sold_, result);
+        else if (s == State::Surplus)
+            gather(surplus_, result);
+        return result;
     }
 
     // [TODO] Return items whose "date" attribute is strictly earlier than d. Items
@@ -94,8 +120,22 @@ namespace inv
     // attribute string, then compare with operator<.)
     std::vector<Item *> Inventory::select_older_than(const Date &d)
     {
-        (void)d; // remove when you implement this
-        return {};
+        std::vector<Item *> all;
+        gather(inStock_, all);
+        gather(onLoan_, all);
+        gather(sold_, all);
+        gather(surplus_, all);
+
+        std::vector<Item *> result;
+        for (Item *p : all)
+        {
+            auto attr = p->attribute("date");
+            if (attr && Date::parse(*attr) < d)
+            {
+                result.push_back(p);
+            }
+        }
+        return result;
     }
 
     // [TODO] Return the n most valuable IN-STOCK items, highest value first. If
@@ -103,16 +143,40 @@ namespace inv
     // by currentValue() descending, then keep at most n.)
     std::vector<Item *> Inventory::select_top_by_value(std::size_t n)
     {
-        (void)n; // remove when you implement this
-        return {};
+        std::vector<Item *> all;
+        gather(inStock_, all);
+        if (n > all.size())
+        {
+            n = all.size();
+        }
+
+        std::partial_sort(all.begin(), all.begin() + n, all.end(),
+                          [](Item *a, Item *b)
+                          {
+                              return a->currentValue() > b->currentValue();
+                          });
+        all.resize(n);
+        return all;
     }
 
     // [TODO] Group ALL items by the given attribute. The map key is the attribute
     // value; items that lack the attribute go under the key "(none)". Return the map.
     std::map<std::string, std::vector<Item *>> Inventory::group_by(std::string_view key)
     {
-        (void)key; // remove when you implement this
-        return {};
+        std::vector<Item *> all;
+        gather(inStock_, all);
+        gather(onLoan_, all);
+        gather(sold_, all);
+        gather(surplus_, all);
+
+        std::map<std::string, std::vector<Item *>> groups;
+        for (Item *p : all)
+        {
+            auto attr = p->attribute(key);
+            std::string groupKey = attr ? *attr : "(none)";
+            groups[groupKey].push_back(p);
+        }
+        return groups;
     }
 
     // ===================== Aggregation =====================
@@ -191,10 +255,24 @@ namespace inv
     std::vector<Item *> Inventory::loan(const std::vector<Item *> &items,
                                         std::string_view borrower, const Date &when)
     {
-        (void)items;
-        (void)borrower;
-        (void)when; // remove when you implement this
-        return {};
+        std::vector<Item *> rejects;
+        for (Item *p : items)
+        {
+            if (p->state() == State::InStock && p->canLoan())
+            {
+                // accepted move to onLoan_
+                auto owned = extract(inStock_, p->id());
+                owned->setState(State::OnLoan);
+                loans_.push_back({owned->id(), std::string(borrower), when});
+                onLoan_.push_back(std::move(owned));
+            }
+            else
+            {
+                // rejected can't loan
+                rejects.push_back(p);
+            }
+        }
+        return rejects;
     }
 
     // [TODO] An item must currently be OnLoan. For each accepted item, set state
@@ -273,10 +351,8 @@ namespace inv
         // print loans sorted by id
         os << "On loan:\n";
         std::vector<LoanRecord> sorted = loans_;
-        std::sort(sorted.begin(), sorted.end(),[](const LoanRecord &a, const LoanRecord &b)
-                  {
-                      return a.itemId < b.itemId;
-                  });
+        std::sort(sorted.begin(), sorted.end(), [](const LoanRecord &a, const LoanRecord &b)
+                  { return a.itemId < b.itemId; });
         for (const auto &loan : sorted)
         {
             os << "  " << loan.itemId << " -> " << loan.borrower
