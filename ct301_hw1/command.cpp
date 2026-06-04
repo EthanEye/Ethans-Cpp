@@ -18,22 +18,22 @@ namespace inv {
 
 // ---- selection verbs: set ctx.selection ----
 // [TODO] ctx.selection = ctx.inv.select_all();
-void SelectAllCommand::execute(RunContext& ctx)       { (void)ctx; /* remove when you implement this */ }
+void SelectAllCommand::execute(RunContext& ctx)       { ctx.selection = ctx.inv.select_all(); }
 // [TODO] ctx.selection = ctx.inv.select_by(key_, value_);
-void SelectByCommand::execute(RunContext& ctx)        { (void)ctx; /* remove when you implement this */ }
+void SelectByCommand::execute(RunContext& ctx)        { ctx.selection = ctx.inv.select_by(key_, value_);}
 // [TODO] ctx.selection = ctx.inv.select_in_state(state_);
-void SelectInStateCommand::execute(RunContext& ctx)   { (void)ctx; /* remove when you implement this */ }
+void SelectInStateCommand::execute(RunContext& ctx)   { ctx.selection = ctx.inv.select_in_state(s_); }
 // [TODO] ctx.selection = ctx.inv.select_older_than(date_);
-void SelectOlderThanCommand::execute(RunContext& ctx) { (void)ctx; /* remove when you implement this */ }
+void SelectOlderThanCommand::execute(RunContext& ctx) { ctx.selection = ctx.inv.select_older_than(d_); }
 // [TODO] ctx.selection = ctx.inv.select_top_by_value(n_);
-void TopByValueCommand::execute(RunContext& ctx)      { (void)ctx; /* remove when you implement this */ }
+void TopByValueCommand::execute(RunContext& ctx)      { ctx.selection = ctx.inv.select_top_by_value(n_); }
 
 // [TODO] GROUP_BY: build the groups (ctx.inv.group_by(key_)), print them with
 // ctx.inv.print(groups, ctx.out), then set ctx.selection to the flattened list
 // of every grouped item.
 void GroupByCommand::execute(RunContext &ctx)
 {
-    ctx.inv.group_by(key_);
+    
     auto groups = ctx.inv.group_by(key_);
     ctx.selection.clear();
     for (const auto &[groupKey, items] : groups)
