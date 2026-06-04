@@ -245,8 +245,25 @@ namespace inv
     // move it into sold_. Return the rejects.
     std::vector<Item *> Inventory::sell(const std::vector<Item *> &items)
     {
-        (void)items; // remove when you implement this
-        return {};
+        std::vector<Item *> rejects;
+        for (Item *p : items)
+        {
+            if (p->state() != State::InStock || !p->canSell())
+            {
+                rejects.push_back(p);
+                continue;
+            }
+            std::unique_ptr<Item> owned = extract(inStock_, p->id());
+            if (!owned)
+            {
+                rejects.push_back(p);
+                continue;
+            }
+            revenue_ += owned->currentValue(); // add to revenue
+            owned->setState(State::Sold);
+            sold_.push_back(std::move(owned)); // move to sold_
+        }
+        return rejects;
     }
 
     // [TODO] An item must be InStock AND canLoan(). For each accepted item, set

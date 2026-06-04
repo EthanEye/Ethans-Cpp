@@ -1,0 +1,5 @@
+BR7001 BORROWED LoanerScope test-bench Tektronix MDO3 lender=PartnerLab returnby=2026-09-01 value=0.00 InStock
+CXY-01 CONSUMABLE USB-C_Cable cables qty=50 value=425.00 InStock
+SN1207 EQUIPMENT DeathAdder_Mouse peripherals Razer DeathAdder_V3 cpu=- purchased=2024-09-01 value=56.00 obsolete=false broken=false warranty=2026-09-01 support=2027-09-01 OnLoan
+SN5500 EQUIPMENT Oscilloscope test-bench Keysight DSOX1204G cpu=- purchased=2019-05-20 value=0.00 obsolete=false broken=true warranty=2022-05-20 support=2024-05-20 Surplus
+SN8842 EQUIPMENT BlackWidow_Keyboard peripherals Razer BlackWidow_V4 cpu=- purchased=2023-02-10 value=72.00 obsolete=false broken=false warranty=2026-02-10 support=2028-02-10 InStock

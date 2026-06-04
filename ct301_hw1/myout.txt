@@ -1,0 +1,1 @@
+./inventory data/appx_inventory.txt data/appx_transactions.txt myout.txt
