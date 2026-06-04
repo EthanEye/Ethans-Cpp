@@ -38,7 +38,10 @@ void GroupByCommand::execute(RunContext& ctx)         { (void)ctx; /* remove whe
 void PrintCommand::execute(RunContext& ctx)  { ctx.inv.print(ctx.selection, ctx.out); }
 
 // [TODO] ctx.inv.report(ctx.out);
-void ReportCommand::execute(RunContext& ctx) { (void)ctx; /* remove when you implement this */ }
+void ReportCommand::execute(RunContext& ctx) { 
+    ctx.inv.report(ctx.out);
+
+}
 
 // ---- action verbs: replace ctx.selection with the rejects ----
 // [TODO] ctx.selection = ctx.inv.surplus(ctx.selection);
