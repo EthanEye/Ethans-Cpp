@@ -145,7 +145,8 @@ namespace inv
     // InStock, then move it into inStock_. (Hint: inStock_.push_back(std::move(item)).)
     void Inventory::add(std::unique_ptr<Item> item)
     {
-        (void)item; // remove when you implement this
+        item->setState(State::InStock);
+        inStock_.push_back(std::move(item));
     }
 
     // [WORKED EXAMPLE] The action pattern, study this; sell/loan/return follow it.

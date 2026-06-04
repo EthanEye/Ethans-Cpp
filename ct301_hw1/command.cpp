@@ -31,7 +31,17 @@ void TopByValueCommand::execute(RunContext& ctx)      { (void)ctx; /* remove whe
 // [TODO] GROUP_BY: build the groups (ctx.inv.group_by(key_)), print them with
 // ctx.inv.print(groups, ctx.out), then set ctx.selection to the flattened list
 // of every grouped item.
-void GroupByCommand::execute(RunContext& ctx)         { (void)ctx; /* remove when you implement this */ }
+void GroupByCommand::execute(RunContext &ctx)
+{
+    ctx.inv.group_by(key_);
+    auto groups = ctx.inv.group_by(key_);
+    ctx.selection.clear();
+    for (const auto &[groupKey, items] : groups)
+    {
+        ctx.selection.insert(ctx.selection.end(), items.begin(), items.end());
+    }
+    ctx.inv.print(groups, ctx.out);
+}
 
 // ---- output verbs: write to ctx.out ----
 // [WORKED EXAMPLE] PRINT shows the current selection on the output stream.
@@ -45,15 +55,15 @@ void ReportCommand::execute(RunContext& ctx) {
 
 // ---- action verbs: replace ctx.selection with the rejects ----
 // [TODO] ctx.selection = ctx.inv.surplus(ctx.selection);
-void SurplusCommand::execute(RunContext& ctx) { (void)ctx; /* remove when you implement this */ }
+void SurplusCommand::execute(RunContext& ctx) { ctx.selection = ctx.inv.surplus(ctx.selection);}
 // [TODO] ctx.selection = ctx.inv.sell(ctx.selection);
-void SellCommand::execute(RunContext& ctx)    { (void)ctx; /* remove when you implement this */ }
+void SellCommand::execute(RunContext& ctx)    { ctx.selection = ctx.inv.sell(ctx.selection);}
 // [TODO] ctx.selection = ctx.inv.loan(ctx.selection, borrower_, when_);
-void LoanCommand::execute(RunContext& ctx)    { (void)ctx; /* remove when you implement this */ }
+void LoanCommand::execute(RunContext& ctx)    { ctx.selection = ctx.inv.loan(ctx.selection, borrower_, when_); }
 // [TODO] ctx.selection = ctx.inv.return_items(ctx.selection);
-void ReturnCommand::execute(RunContext& ctx)  { (void)ctx; /* remove when you implement this */ }
+void ReturnCommand::execute(RunContext& ctx)  { ctx.selection = ctx.inv.return_items(ctx.selection); }
 
 // [TODO] ctx.inv.add(std::move(item_));
-void AddCommand::execute(RunContext& ctx)     { (void)ctx; /* remove when you implement this */ }
+void AddCommand::execute(RunContext& ctx)     { ctx.inv.add(std::move(item_));}
 
 } // namespace inv

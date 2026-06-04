@@ -48,52 +48,40 @@ namespace inv
     // [TODO] true when both dates are the same day.
     bool Date::operator==(const Date &o) const
     {
-        (void)o; /* remove when you implement this */
-        return false;
+        return y_ == o.y_ && m_ == o.m_ && d_ == o.d_;
     }
 
     // [TODO] true when the dates differ (hint: !(*this == o)).
     bool Date::operator!=(const Date &o) const
     {
-        (void)o; /* remove when you implement this */
-        return false;
+        return y_ != o.y_ || m_ != o.m_ || d_ != o.d_;
     }
 
     // [TODO] true when *this is strictly before o (compare year, then month, then day).
     bool Date::operator<(const Date &o) const
     {
-        (void)o; /* remove when you implement this */
-        return false;
+        return (y_ < o.y_) || (y_ == o.y_ && m_ < o.m_) || (y_ == o.y_ && m_ == o.m_ && d_ < o.d_);
     }
 
     // [TODO] the remaining three, in terms of < and ==.
     bool Date::operator<=(const Date &o) const
     {
-        (void)o; /* remove when you implement this */
-        return false;
+        return (*this < o) || (*this == o);
     }
     bool Date::operator>(const Date &o) const
     {
-        (void)o;
-        if (y_ != o.y_)
-            return y_ > o.y_;
-        if (m_ != o.m_)
-            return m_ > o.m_;
-        return d_ > o.d_;
-        return false;
+        return !(*this <= o);
     }
     bool Date::operator>=(const Date &o) const
     {
-        (void)o; /* remove when you implement this */
-        return false;
+        return !(*this < o);
     }
 
     // [TODO] print as YYYY-MM-DD, zero-padded. Hint:
     //   os << std::format("{:04d}-{:02d}-{:02d}", d.year(), d.month(), d.day());
     std::ostream &operator<<(std::ostream &os, const Date &d)
     {
-        (void)d; // remove when you implement this
-        return os;
+        return os << std::format("{:04d}-{:02d}-{:02d}", d.year(), d.month(), d.day());
     }
 
 } // namespace inv
