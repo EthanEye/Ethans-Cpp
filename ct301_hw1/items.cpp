@@ -78,7 +78,8 @@ namespace inv
     void Equipment::printTo(std::ostream &os) const
     {
         os << id() << " EQUIPMENT " << name() << " " << category() << " "
-           << brand_ << " " << model_ << " cpu=" << cpu_
+           << brand_ << " " << model_
+           << " cpu=" << cpu_
            << " purchased=" << dstr(purchased_)
            << std::format(" value={:.2f}", currentValue())
            << " obsolete=" << (obsolete_ ? "true" : "false")
@@ -133,9 +134,13 @@ namespace inv
     }
 
     // [TODO] Print one line in the exact sample-output format for Borrowed.
-    void Borrowed::printTo(std::ostream &os) const
-    {
-        (void)os; // remove when you implement this
-    }
+    void Borrowed::printTo(std::ostream& os) const {
+    os << id() << " BORROWED " << name() << " " << category() << " "
+       << brand_ << " " << model_
+       << " lender=" << lender_
+       << " returnby=" << dstr(returnBy_)
+       << std::format(" value={:.2f}", currentValue())
+       << " " << to_string(state());
+}
 
 } // namespace inv
