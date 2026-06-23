@@ -52,6 +52,22 @@ public:
         return *this; // return *this (constructor doesn't need this)
     }
 
+    // Add these two to your IntArray from Explore 2.
+
+    // Move constructor: take other's buffer, then leave other empty.
+    IntArray(IntArray &&other) noexcept
+    {
+        // TODO: copy other's data_ and size_ into this, then set
+        //       other.data_ = nullptr and other.size_ = 0
+    }
+
+    // Move assignment: free what you hold, take other's buffer, leave other empty.
+    IntArray &operator=(IntArray &&other) noexcept
+    {
+        // TODO
+        return *this;
+    }
+
     int &at(int i) { return data_[i]; }
     int size() const { return size_; }
 
@@ -60,19 +76,30 @@ private:
     int size_;
 };
 
-int main()
-{
+// int main()
+// {
+//     IntArray a(3);
+//     a.at(0) = 10;
+//     a.at(1) = 20;
+//     a.at(2) = 30;
+//     IntArray b = a; // copy; with a DEEP copy, b gets its own buffer
+//     b.at(0) = 99;   // this must NOT change a
+//     IntArray c(5);
+//     c = a;
+//     c.at(0) = 55; // this must NOT change a
+//     std::cout << "a[0] = " << a.at(0) << " (should stay 10)" << std::endl;
+//     std::cout << "b[0] = " << b.at(0) << " (should be 99)" << std::endl;
+//     std::cout << "c[0] = " << c.at(0) << " (should be 55)" << std::endl;
+//     return 0;
+// }
+
+// Explore 3
+
+int main() {
     IntArray a(3);
     a.at(0) = 10;
-    a.at(1) = 20;
-    a.at(2) = 30;
-    IntArray b = a; // copy; with a DEEP copy, b gets its own buffer
-    b.at(0) = 99;   // this must NOT change a
-    IntArray c(5);
-    c = a;
-    c.at(0) = 55; // this must NOT change a
-    std::cout << "a[0] = " << a.at(0) << " (should stay 10)" << std::endl;
-    std::cout << "b[0] = " << b.at(0) << " (should be 99)" << std::endl;
-    std::cout << "c[0] = " << c.at(0) << " (should be 55)" << std::endl;
+    IntArray c = std::move(a);   // move: c steals a's buffer
+    std::cout << "after move, a.size() = " << a.size() << " (expect 0)\n";
+    std::cout << "c[0] = " << c.at(0) << " (expect 10)\n";
     return 0;
 }
