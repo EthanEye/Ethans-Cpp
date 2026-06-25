@@ -88,27 +88,59 @@ namespace ct
                 size_ = count;
             }
         }
-
+        // a initializer list uses curly brackets { }
         Vector(std::initializer_list<T> list) : Vector()
         {
             // TODO: make room for list.size(), then copy the elements in.
+            reserve(list.size());
+            for (const T &val : list)
+            {
+                new (elements_ + size_) T(val);
+                size_++;
+            }
         }
 
         // Range constructor from a pointer range. A const_iterator (pointer) cannot
         // be confused with an integer count, so no template and no concepts.
         Vector(const_iterator first, const_iterator last) : Vector()
         {
-            // TODO: measure the range (last - first), make room, copy it in.
+            size_type range = static_cast<size_type>(last - first);
+            if (range > 0)
+            {
+                reserve(range);
+                for (size_type i = 0; i < range; i++)
+                {
+                    new (elements_ + i) T(first[i]);
+                }
+                size_ = range;
+            }
         }
 
         Vector(const Vector &other) : Vector()
         {
             // TODO: make room for other.size(), then copy its elements in.
+            size_type new_size = other.size_;
+            if (new_size > 0)
+            {
+                reserve(new_size);
+                for (size_type i = 0; i < new_size; i++)
+                {
+                    new (elements_ + i) T(other.elements_[i]);
+                }
+            }
+            size_ = new_size;
         }
 
         Vector(Vector &&other) noexcept : Vector()
         {
             // TODO: steal other's buffer/size/capacity; leave other empty.
+            elements_ = other.elements_;
+            size_ = other.size_;
+            capacity_ = other.capacity_;
+
+            other.elements_ = nullptr;
+            other.size_ = 0;
+            other.capacity_ = 0;
         }
 
         ~Vector()
@@ -211,18 +243,17 @@ namespace ct
         void reserve(size_type new_cap)
         {
             // TODO
-            if(new_cap <= capacity_) return;
-            T* new_data = allocate(new_cap);
-             std::uninitialized_move_n(elements_, newcap_, new_data); // move objects into empty memory, one by one
-             std::destroy_n(elements_, newcap_); // call destructor on each element but dosent free the memroy
-             deallocate(elements_); // calls ::operator delete whichs free the memory for itself in the future or another process
-    
-            elements_ = new_data;
-            capacity_ = new_cap;        
-           
+            if (new_cap <= capacity_)
+                return;
+            T *new_data = allocate(new_cap);
+            std::uninitialized_move_n(elements_, newcap_, new_data); // move objects into empty memory, one by one
+            std::destroy_n(elements_, newcap_);                      // call destructor on each element but dosent free the memroy
+            deallocate(elements_);                                   // calls ::operator delete whichs free the memory for itself in the future or another process
 
+            elements_ = new_data;
+            capacity_ = new_cap;
         }
-    
+
         void shrink_to_fit()
         {
             // TODO: reduce capacity to size (the same four steps, smaller).
@@ -346,14 +377,14 @@ namespace ct
         T *allocate(size_type n)
         {
             // TODO
-            void* raw = ::operator new(sizeof(T) * n);  // stores pointer first no type yet
-            T* ptr = static_cast<T*>(raw);        // determine the type needed
+            void *raw = ::operator new(sizeof(T) * n); // stores pointer first no type yet
+            T *ptr = static_cast<T *>(raw);            // determine the type needed
 
             return ptr;
         }
         void deallocate() noexcept
         {
-                ::operator delete(ptr); 
+            ::operator delete(ptr);
         }
     };
 
