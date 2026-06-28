@@ -314,9 +314,9 @@ namespace ct
     const_reverse_iterator crend() const noexcept { return const_reverse_iterator(cbegin()); }
 
     // ---- Capacity ---------------------------------------------------------
-    bool empty() const noexcept { return false; /* TODO */ }
-    size_type size() const noexcept { return 0; /* TODO */ }
-    size_type capacity() const noexcept { return 0; /* TODO */ }
+    bool empty() const noexcept { return size_ == 0; /* TODO */ }
+    size_type size() const noexcept { return size_; /* TODO */ }
+    size_type capacity() const noexcept { return capacity_; /* TODO */ }
     size_type max_size() const noexcept
     { // given
       return std::numeric_limits<size_type>::max() / sizeof(T);
