@@ -279,15 +279,15 @@ namespace ct
       return elements_[size_ - 1];
     }
 
-    T *data() noexcept { return nullptr; /* TODO */ }
-    const T *data() const noexcept { return nullptr; /* TODO */ }
+    T *data() noexcept { return nullptr; return elements_;}
+    const T *data() const noexcept { return nullptr; return elements_; }
 
     // ---- Forward iterators ------------------------------------------------
-    iterator begin() noexcept { return nullptr; /* TODO */ }
-    const_iterator begin() const noexcept { return nullptr; /* TODO */ }
-    iterator end() noexcept { return nullptr; /* TODO */ }
-    const_iterator end() const noexcept { return nullptr; /* TODO */ }
-    const_iterator cbegin() const noexcept { return nullptr; /* TODO */ }
+    iterator begin() noexcept { return elements_; }
+    const_iterator begin() const noexcept { return elements_; /* TODO */ }
+    iterator end() noexcept { return elements_ + size_; }
+    const_iterator end() const noexcept { return elements_ + size_; /* TODO */ }
+    const_iterator cbegin() const noexcept { return elements_;/* TODO */ }
     const_iterator cend() const noexcept { return elements_ + size_; } // given
 
     // ---- Reverse iterators ------------------------------------------------
