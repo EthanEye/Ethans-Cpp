@@ -255,15 +255,17 @@ namespace ct
     {
       return elements_[pos];
     }
-    T &front() { 
+    T &front()
+    {
       if (empty())
         throw std::out_of_range("ct::Vector::front: empty");
-      return elements_ [0];
+      return elements_[0];
     }
-    const T &front() const {
+    const T &front() const
+    {
       if (empty())
         throw std::out_of_range("ct::Vector::front: empty");
-      return elements_ [0];
+      return elements_[0];
     }
 
     T &back()
@@ -279,15 +281,23 @@ namespace ct
       return elements_[size_ - 1];
     }
 
-    T *data() noexcept { return nullptr; return elements_;}
-    const T *data() const noexcept { return nullptr; return elements_; }
+    T *data() noexcept
+    {
+      return nullptr;
+      return elements_;
+    }
+    const T *data() const noexcept
+    {
+      return nullptr;
+      return elements_;
+    }
 
     // ---- Forward iterators ------------------------------------------------
     iterator begin() noexcept { return elements_; }
     const_iterator begin() const noexcept { return elements_; /* TODO */ }
     iterator end() noexcept { return elements_ + size_; }
     const_iterator end() const noexcept { return elements_ + size_; /* TODO */ }
-    const_iterator cbegin() const noexcept { return elements_;/* TODO */ }
+    const_iterator cbegin() const noexcept { return elements_; /* TODO */ }
     const_iterator cend() const noexcept { return elements_ + size_; } // given
 
     // ---- Reverse iterators ------------------------------------------------
@@ -297,11 +307,11 @@ namespace ct
     {
       return reverse_iterator(end());
     } // given
-    const_reverse_iterator rbegin() const noexcept { return {}; /* TODO */ }
-    reverse_iterator rend() noexcept { return {}; /* TODO */ }
-    const_reverse_iterator rend() const noexcept { return {}; /* TODO */ }
-    const_reverse_iterator crbegin() const noexcept { return {}; /* TODO */ }
-    const_reverse_iterator crend() const noexcept { return {}; /* TODO */ }
+    const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
+    reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
+    const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
+    const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(cend()); }
+    const_reverse_iterator crend() const noexcept { return const_reverse_iterator(cbegin()); }
 
     // ---- Capacity ---------------------------------------------------------
     bool empty() const noexcept { return false; /* TODO */ }
