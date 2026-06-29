@@ -294,19 +294,16 @@ public:
   //   new.
   // Do nothing if new_cap <= capacity_.
   void reserve(size_type new_cap) {
-    // TODO
-    if (new_cap <= capacity_)
-      return;
+   if (new_cap <= capacity_) return;
+    
     T *new_data = allocate(new_cap);
-    std::uninitialized_move_n(
-        elements_, new_cap,
-        new_data); // move objects into empty memory, one by one
-    std::destroy_n(
-        elements_,
-        new_cap); // call destructor on each element but dosent free the memory
-    deallocate(elements_); // calls ::operator delete whichs free the memory for
-                           // itself in the future or another process
-
+    
+    if (elements_ != nullptr) {  // only move/destroy if theres something there
+        std::uninitialized_move_n(elements_, size_, new_data);
+        std::destroy_n(elements_, size_);
+        deallocate();
+    }
+    
     elements_ = new_data;
     capacity_ = new_cap;
   }
@@ -323,7 +320,7 @@ public:
     std::destroy_n(
         elements_,
         size_); // call destructor on each element but dosent free the memroy
-    deallocate(elements_); // calls ::operator delete whichs free the memory for
+    deallocate(); // calls ::operator delete whichs free the memory for
                            // itself in the future or another process
     elements_ = new_data;
     capacity_ = size_;
@@ -350,18 +347,29 @@ public:
 
   iterator insert(const_iterator pos, T &&value) {
     // TODO: like the given insert, but move the value in.
-    return begin() + (pos - begin());
+    const size_type index = static_cast<size_type>(pos - begin());
+    push_back(std::move(value));
+    std::rotate(begin() + index, end() - 1, end());
+    return begin() + index;
   }
 
   iterator insert(const_iterator pos, size_type count, const T &value) {
-    // TODO: insert count copies of value before pos.
-    return begin() + (pos - begin());
+    const size_type index = static_cast<size_type>(pos - begin());
+    for (size_type i = 0; i < count; i++)
+        push_back(value);
+    std::rotate(begin() + index, end() - count, end());
+    return begin() + index;
   }
 
-  iterator insert(const_iterator pos, const_iterator first,
-                  const_iterator last) {
-    // TODO: insert the range [first,last) before pos.
-    return begin() + (pos - begin());
+  iterator insert(const_iterator pos, const_iterator first, const_iterator last){
+
+    const size_type index = static_cast<size_type>(pos - begin());
+    size_type count = static_cast<size_type>(last - first);
+    for (const_iterator it = first; it != last; ++it)
+        push_back(*it);
+    std::rotate(begin() + index, end() - count, end());
+    return begin() + index;
+      
   }
 
   iterator insert(const_iterator pos,
@@ -378,13 +386,21 @@ public:
   }
 
   iterator erase(const_iterator pos) {
-    // TODO: remove the element at pos; return iterator to the next one.
-    return begin() + (pos - begin());
+    const size_type index = static_cast<size_type>(pos - begin());
+    std::rotate(begin() + index, begin() + index + 1, end());
+    std::destroy_at(elements_ + size_ - 1);
+    --size_;
+    return begin() + index;
   }
 
   iterator erase(const_iterator first, const_iterator last) {
     // TODO: remove [first, last); return iterator to the element after.
-    return begin() + (first - begin());
+    const size_type index = static_cast<size_type>(first - begin());
+    const size_type count = static_cast<size_type>(last - first);
+    std::rotate(begin() + index, begin() + index + count, end());
+    std::destroy_n(elements_ + size_ - count, count);
+    size_ -= count;
+    return begin() + index;
   }
 
   void push_back(const T &value) {
@@ -491,8 +507,8 @@ private:
 // ---- Non-member functions ------------------------------------------------
 template <typename T>
 bool operator==(const Vector<T> &lhs, const Vector<T> &rhs) {
-  // TODO: equal sizes and equal elements in order.
-  return false;
+  if (lhs.size() != rhs.size()) return false;
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 template <typename T> // given (delegates)

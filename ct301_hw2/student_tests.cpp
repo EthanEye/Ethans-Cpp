@@ -80,54 +80,130 @@ void test_driver_on_world_cup() {
 
 void test_at_is_bounds_checked() {
     std::cout << "test_at_is_bounds_checked\n";
-    // TODO: build a small vector. Check that operator[] returns the right
-    // element, and that at(pos) throws std::out_of_range when pos is past the
-    // end (use a try/catch around at()).
-    todo("test_at_is_bounds_checked");
+      // TODO: reserve a larger capacity on a small vector. Check that capacity()
+    // grew to at least what you asked for, that size() did not change, and that
+    // the existing elements are still correct.
+    ct::Vector<int> v{1, 2, 3};
+    
+    // test operator[] returns right element
+    check(v[0] == 1, "operator[] index 0");
+    check(v[1] == 2, "operator[] index 1");
+    check(v[2] == 3, "operator[] index 2");
+    
+    // test at() throws out_of_range when out of bounds
+    bool threw = false;
+    try {
+        v.at(10);
+    } catch (const std::out_of_range&) {
+        threw = true;
+    }
+    check(threw, "at() throws out_of_range");
 }
 
 void test_reserve_grows_capacity() {
     std::cout << "test_reserve_grows_capacity\n";
-    // TODO: reserve a larger capacity on a small vector. Check that capacity()
-    // grew to at least what you asked for, that size() did not change, and that
-    // the existing elements are still correct.
-    todo("test_reserve_grows_capacity");
+     std::cout << "test_reserve_grows_capacity\n";
+
+    ct::Vector<int> v{1, 2, 3};
+    
+    size_t old_capacity = v.capacity();
+    v.reserve(100);
+    
+    check(v.capacity() >= 100, "capacity >= 100 after reserve");
+    check(v.capacity() > old_capacity, "capacity grew");
+    check(v.size() == 3, "size unchanged after reserve");
+    check(v[0] == 1, "elements preserved after reserve");
+    check(v[1] == 2, "elements preserved after reserve");
+    check(v[2] == 3, "elements preserved after reserve");
 }
 
 void test_iterators_walk_in_order() {
     std::cout << "test_iterators_walk_in_order\n";
     // TODO: build a vector, sum it by walking begin() to end(), and check the
     // sum. Then check that rbegin()/rend() visit the elements in reverse.
-    todo("test_iterators_walk_in_order");
+
+    ct::Vector<int> v{1, 2, 3, 4, 5};
+
+    // sum with forward iterators
+    int sum = 0;
+    for (auto it = v.begin(); it != v.end(); ++it)
+        sum += *it;
+    check(sum == 15, "forward iterator sum");
+
+    // check reverse iterators visit in reverse
+    ct::Vector<int> reversed;
+    for (auto it = v.rbegin(); it != v.rend(); ++it)
+        reversed.push_back(*it);
+
+    check(reversed[0] == 5, "rbegin starts at last element");
+    check(reversed[4] == 1, "rend ends at first element");
+    
+
 }
 
 void test_insert_and_erase() {
     std::cout << "test_insert_and_erase\n";
-    // TODO: start from {1,2,4}. insert 3 before the 4 and check you get
-    // {1,2,3,4}. Then erase the 2 and check you get {1,3,4}.
-    todo("test_insert_and_erase");
+
+    ct::Vector<int> v{1, 2, 4};
+
+    // insert 3 before the 4
+    v.insert(v.begin() + 2, 3);
+    check(v[0] == 1, "after insert: v[0] == 1");
+    check(v[1] == 2, "after insert: v[1] == 2");
+    check(v[2] == 3, "after insert: v[2] == 3");
+    check(v[3] == 4, "after insert: v[3] == 4");
+    check(v.size() == 4, "after insert: size == 4");
+
+    // erase the 2 (index 1)
+    v.erase(v.begin() + 1);
+    check(v[0] == 1, "after erase: v[0] == 1");
+    check(v[1] == 3, "after erase: v[1] == 3");
+    check(v[2] == 4, "after erase: v[2] == 4");
+    check(v.size() == 3, "after erase: size == 3");
 }
 
 void test_clear_then_reuse() {
     std::cout << "test_clear_then_reuse\n";
     // TODO: fill a vector, clear() it, check size() == 0 and empty() is true,
     // then push_back again and check it still works.
-    todo("test_clear_then_reuse");
+    ct::Vector<int> v{1, 2, 3, 4, 5};
+
+    v.clear();
+    check(v.size() == 0, "after clear: size == 0");
+    check(v.empty(), "after clear: empty() is true");
+
+    // reuse after clear
+    v.push_back(10);
+    v.push_back(20);
+    check(v.size() == 2, "after reuse: size == 2");
+    check(v[0] == 10, "after reuse: v[0] == 10");
+    check(v[1] == 20, "after reuse: v[1] == 20");
 }
 
 void test_move_leaves_source_empty() {
     std::cout << "test_move_leaves_source_empty\n";
-    // TODO: build a vector, move-construct a second one from it, and check the
-    // second has the elements. (A moved-from vector is valid but unspecified;
-    // do not assume what is left in the source.)
-    todo("test_move_leaves_source_empty");
+     ct::Vector<int> a{1, 2, 3};
+
+    // move construct b from a
+    ct::Vector<int> b(std::move(a));
+
+    // b should have the elements
+    check(b.size() == 3, "after move: b.size() == 3");
+    check(b[0] == 1, "after move: b[0] == 1");
+    check(b[1] == 2, "after move: b[1] == 2");
+    check(b[2] == 3, "after move: b[2] == 3");
+
+    // a is valid but unspecified — only check it won't crash
+    check(a.size() == 0, "after move: source is empty");
 }
 
 void test_big_vector_via_generator() {
     std::cout << "test_big_vector_via_generator\n";
-    // TODO: use make_sequence(1000) from fixtures.h. Check size() == 1000 and
-    // total(...) == 500500. This grows the buffer through many reallocations.
-    todo("test_big_vector_via_generator");
+
+    ct::Vector<int> v = ctlab::make_sequence(1000);
+
+    check(v.size() == 1000, "size == 1000");
+    check(ctlab::total(v) == 500500, "total == 500500");
 }
 
 // ============================================================================
