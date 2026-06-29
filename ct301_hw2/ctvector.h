@@ -244,11 +244,9 @@ public:
   }
 
   T *data() noexcept {
-    return nullptr;
     return elements_;
   }
   const T *data() const noexcept {
-    return nullptr;
     return elements_;
   }
 
@@ -294,6 +292,8 @@ public:
   //   new.
   // Do nothing if new_cap <= capacity_.
   void reserve(size_type new_cap) {
+   if (new_cap > max_size())
+      throw std::length_error("ct::Vector::reserve: exceeds max_size");
    if (new_cap <= capacity_) return;
     
     T *new_data = allocate(new_cap);
@@ -309,19 +309,19 @@ public:
   }
 
   void shrink_to_fit() {
-    // TODO
-    if (capacity_ == size_)
-      return;
-
+    if (capacity_ == size_) return;
+    
+    if (size_ == 0) {  
+        deallocate();
+        elements_ = nullptr;
+        capacity_ = 0;
+        return;
+    }
+    
     T *new_data = allocate(size_);
-    std::uninitialized_move_n(
-        elements_, size_,
-        new_data); // move objects into empty memory, one by one
-    std::destroy_n(
-        elements_,
-        size_); // call destructor on each element but dosent free the memroy
-    deallocate(); // calls ::operator delete whichs free the memory for
-                           // itself in the future or another process
+    std::uninitialized_move_n(elements_, size_, new_data);
+    std::destroy_n(elements_, size_);
+    deallocate();
     elements_ = new_data;
     capacity_ = size_;
   }
@@ -501,7 +501,11 @@ private:
 
     return ptr;
   }
-  void deallocate() noexcept { ::operator delete(elements_); }
+  void deallocate() noexcept { 
+    ::operator delete(elements_); 
+    elements_ = nullptr;
+    capacity_ = 0;
+}
 };
 
 // ---- Non-member functions ------------------------------------------------
