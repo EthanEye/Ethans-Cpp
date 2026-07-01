@@ -13,4 +13,4 @@ clean:
 	rm -f Scheduler *.o *.zip
 	
 package:
-	zip LastName-FirstName-HW5.zip README.txt Makefile Scheduler.cc
+	zip Eye-Ethan-HW5.zip README.txt Makefile Scheduler.cc

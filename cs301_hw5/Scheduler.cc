@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <sstream>
 #include <numeric>
+#include <climits>
 
 class Process
 {
@@ -16,9 +17,8 @@ public:
     int priority;
 };
 
-// turn around is total time process was waiting and executing
-// waiting time is total time process was waiting
-// throughput is number of processes completed per unit time
+// turn around is total time process was waiting and executing - >waiting time is total time process was waiting
+// -> throughput is number of processes completed per unit time
 
 class FCFS
 {
@@ -47,10 +47,10 @@ public:
         }
         double throughput = static_cast<double>(processes.size()) / currentTime;
 
-        std::cout << "Average Turnaround Time: " << 
-        std::accumulate(turn_arounds.begin(), turn_arounds.end(), 0.0) / turn_arounds.size() << std::endl;
-        std::cout << "Average Waiting Time: " << 
-        std::accumulate(wait_times.begin(), wait_times.end(), 0.0) / wait_times.size() << std::endl;
+        std::cout << "Average Turnaround Time: " << std::accumulate(turn_arounds.begin(), turn_arounds.end(), 0.0) / turn_arounds.size() << std::endl;
+
+        std::cout << "Average Waiting Time: " << std::accumulate(wait_times.begin(), wait_times.end(), 0.0) / wait_times.size() << std::endl;
+
         std::cout << "Throughput: " << throughput << std::endl;
     }
 
@@ -71,16 +71,125 @@ class SJFP
 public:
     void schedule(std::vector<Process> &processes)
     {
-        (void)processes;
+        // every tick of the clock look at all processes that have arrived and pick the one with the shortest remaining time.
+        // run it for a tick, then repeat. If a new process arrives with a shorter remaining time, preempt the current process
+        // and run the new one.
+        std::vector<int> remaining(processes.size());
+        for (size_t i = 0; i < processes.size(); i++)
+        {
+            remaining[i] = processes[i].burst;
+        }
+
+        double totalTurnaround = 0.0;
+        double totalWaiting = 0.0;
+        int currentTime = 0;
+        int completed = 0;
+
+        while (static_cast<size_t>(completed) < processes.size())
+        {
+            int shortest = -1;
+            int minBurst = INT_MAX;
+            for (size_t i = 0; i < processes.size(); i++)
+            {
+                // checks has it arrived, is it not finished, and is it the shortest remaining time
+                if (processes[i].arrival <= currentTime &&
+                    remaining[i] > 0 &&
+                    remaining[i] < minBurst)
+                {
+                    minBurst = remaining[i];
+                    shortest = static_cast<int>(i);
+                }
+            }
+            // if no process is ready to run, increment time and jump back to the start of the loop
+            if (shortest == -1)
+            {
+                currentTime++;
+                continue;
+            }
+            // run the shortest process for one tick
+            remaining[shortest]--;
+            currentTime++;
+            // if the process is completed, calculate turnaround and waiting time
+            if (remaining[shortest] == 0)
+            {
+                completed++;
+                double turnaround = currentTime - processes[shortest].arrival;
+                double waiting = turnaround - processes[shortest].burst;
+                totalTurnaround += turnaround;
+                totalWaiting += waiting;
+            }
+        }
+
+        double avgTurnaround = totalTurnaround / processes.size();
+        double avgWaiting = totalWaiting / processes.size();
+        double throughput = static_cast<double>(processes.size()) / currentTime;
+
+        std::cout << "Average Turnaround Time: " << avgTurnaround << "\n";
+        std::cout << "Average Waiting Time: " << avgWaiting << "\n";
+        std::cout << "Throughput: " << throughput << "\n";
     }
 };
+// Works similarly to SJFP, but instead of picking the shortest remaining time, it picks the highest priority (lowest number) process that has arrived and is not finished.
+// If a new process arrives with a higher priority than the currently running process, preempt the current process and run the new one.
 
 class PriorityScheduler
 {
 public:
     void schedule(std::vector<Process> &processes)
     {
-        (void)processes;
+        std::vector<int> remaining(processes.size());
+        for (size_t i = 0; i < processes.size(); i++)
+        {
+            remaining[i] = processes[i].burst;
+        }
+
+        double totalTurnaround = 0.0;
+        double totalWaiting = 0.0;
+        int currentTime = 0;
+        int completed = 0;
+
+        while (static_cast<size_t>(completed) < processes.size())
+        {
+            int shortest = -1;
+            int minPriority = INT_MAX;
+            for (size_t i = 0; i < processes.size(); i++)
+            {
+                // checks has it arrived, is it not finished, and is it the highest priority
+                if (processes[i].arrival <= currentTime &&
+                    remaining[i] > 0 &&
+                    processes[i].priority < minPriority)
+                {
+                    minPriority = processes[i].priority;
+                    shortest = static_cast<int>(i);
+                }
+            }
+            // if no process is ready to run, increment time and jump back to the start of the loop
+            if (shortest == -1)
+            {
+                currentTime++;
+                continue;
+            }
+            // run the shortest process for one tick
+            remaining[shortest]--;
+            currentTime++;
+            // if the process is completed, calculate turnaround and waiting time
+            if (remaining[shortest] == 0)
+            {
+                completed++;
+                double turnaround = currentTime - processes[shortest].arrival;
+                double waiting = turnaround - processes[shortest].burst;
+                totalTurnaround += turnaround;
+                totalWaiting += waiting;
+            }
+        }
+
+        double avgTurnaround = totalTurnaround / processes.size();
+        double avgWaiting = totalWaiting / processes.size();
+        double throughput = static_cast<double>(processes.size()) / currentTime;
+
+        std::cout << "Average Turnaround Time: " << avgTurnaround << "\n";
+        std::cout << "Average Waiting Time: " << avgWaiting << "\n";
+        std::cout << "Throughput: " << throughput << "\n";
     }
 };
 
