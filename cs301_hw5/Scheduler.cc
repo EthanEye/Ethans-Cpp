@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <sstream>
+#include <numeric>
 
 class Process
 {
@@ -15,12 +16,53 @@ public:
     int priority;
 };
 
+// turn around is total time process was waiting and executing
+// waiting time is total time process was waiting
+// throughput is number of processes completed per unit time
+
 class FCFS
 {
 public:
     void schedule(std::vector<Process> &processes)
     {
-        (void)processes;
+        std::vector<double> turn_arounds;
+        std::vector<double> wait_times;
+        sort_by_arrival(processes);
+
+        int currentTime = 0;
+        double turnaround = 0;
+        double completion = 0;
+        double waiting = 0;
+
+        for (const Process &p : processes)
+        {
+            if (currentTime < p.arrival)
+                currentTime = p.arrival;
+            currentTime += p.burst;
+            completion = currentTime;
+            turnaround = completion - p.arrival;
+            turn_arounds.push_back(turnaround);
+            waiting = turnaround - p.burst;
+            wait_times.push_back(waiting);
+        }
+        double throughput = static_cast<double>(processes.size()) / currentTime;
+
+        std::cout << "Average Turnaround Time: " << 
+        std::accumulate(turn_arounds.begin(), turn_arounds.end(), 0.0) / turn_arounds.size() << std::endl;
+        std::cout << "Average Waiting Time: " << 
+        std::accumulate(wait_times.begin(), wait_times.end(), 0.0) / wait_times.size() << std::endl;
+        std::cout << "Throughput: " << throughput << std::endl;
+    }
+
+    void sort_by_arrival(std::vector<Process> &processes)
+    {
+        std::sort(processes.begin(), processes.end(),
+                  [](const Process &a, const Process &b)
+                  {
+                      if (a.arrival == b.arrival)
+                          return a.id < b.id;
+                      return a.arrival < b.arrival;
+                  });
     }
 };
 
@@ -94,4 +136,3 @@ int main(int argc, char *argv[])
     file.close();
     return run(processes);
 }
-
